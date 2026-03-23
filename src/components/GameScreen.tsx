@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react"
 import {
   View, Text, TouchableOpacity,
-  StyleSheet, LayoutChangeEvent,
+  StyleSheet, LayoutChangeEvent, Platform,
 } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { MemoryCardComponent } from "./MemoryCard"
 import type { MemoryCard, Difficulty, Category } from "../types"
 import { formatTime } from "../utils/helpers"
@@ -55,6 +56,7 @@ export function GameScreen({
 }: Props) {
   const [elapsed, setElapsed] = useState(0)
   const [gridSize, setGridSize] = useState({ width: 0, height: 0 })
+  const insets = useSafeAreaInsets()
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => { setElapsed(0) }, [timerKey])
@@ -102,7 +104,7 @@ export function GameScreen({
   }
 
   return (
-    <View style={styles.screen}>
+    <View style={[styles.screen, { paddingTop: insets.top + 4 }]}>
 
       {/* HUD */}
       <View style={styles.hud}>
@@ -171,7 +173,6 @@ export function GameScreen({
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    paddingTop: 8,
     paddingHorizontal: 8,
     paddingBottom: 8,
   },
