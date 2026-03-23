@@ -86,6 +86,9 @@ export function GameScreen({
   let cardW = 60
   let cardH = 76
 
+  const MAX_CARD_W = 130
+  const MAX_CARD_H = 175
+
   if (gridSize.width > 0 && gridSize.height > 0) {
     const maxCardW = Math.floor((gridSize.width  - GAP * (cols + 1)) / cols)
     const maxCardH = Math.floor((gridSize.height - GAP * (rows + 1)) / rows)
@@ -93,6 +96,9 @@ export function GameScreen({
     cardH = Math.min(maxCardH, Math.floor(cardW * 1.35))
     cardW = Math.min(cardW, Math.floor(cardH / 1.35))
     cardH = Math.floor(cardW * 1.35)
+    // Cap for tablets / large screens
+    cardW = Math.min(cardW, MAX_CARD_W)
+    cardH = Math.min(cardH, MAX_CARD_H)
   }
 
   return (
