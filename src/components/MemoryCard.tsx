@@ -70,6 +70,7 @@ export function MemoryCardComponent({ card, isFlipped, onClick, cardWidth, cardH
         <Animated.View style={[
           styles.cardFace,
           styles.cardFront,
+          (isFlag || category === "cars") && styles.cardFrontNonAnimal,
           card.isMatched && styles.cardMatched,
           { width: cardWidth, height: cardHeight },
           { transform: [{ scaleX: frontScaleX }], opacity: frontOpacity, position: "absolute" },
@@ -118,6 +119,10 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderColor: "#CBD5E1",
     flexDirection: "column",
+  },
+  cardFrontNonAnimal: {
+    backgroundColor: "#E8ECF0",
+    borderColor: "#B0BAC4",
   },
   cardMatched: {
     backgroundColor: "#ECFDF5",
