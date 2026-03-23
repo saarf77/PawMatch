@@ -1,16 +1,17 @@
-import type { MemoryCard } from "../types"
-import { ICONS_CONFIG } from "../utils/constants"
+import type { MemoryCard, Category } from "../types"
+import { ANIMALS_CONFIG, FLAGS_CONFIG, CARS_CONFIG } from "../utils/constants"
 
 export class GameService {
-  static createCards(numPairs: number): MemoryCard[] {
-    const shuffled = [...ICONS_CONFIG].sort(() => Math.random() - 0.5)
-    const selectedIcons = shuffled.slice(0, numPairs)
+  static createCards(numPairs: number, category: Category = "animals"): MemoryCard[] {
+    const config = category === "flags" ? FLAGS_CONFIG : category === "cars" ? CARS_CONFIG : ANIMALS_CONFIG
+    const shuffled = [...config].sort(() => Math.random() - 0.5)
+    const selected = shuffled.slice(0, numPairs)
     const cards: MemoryCard[] = []
 
-    selectedIcons.forEach(({ animalId, label }, index) => {
+    selected.forEach(({ itemId, label }, index) => {
       cards.push(
-        { id: index * 2, animalId, label, isMatched: false },
-        { id: index * 2 + 1, animalId, label, isMatched: false },
+        { id: index * 2, itemId, label, isMatched: false },
+        { id: index * 2 + 1, itemId, label, isMatched: false },
       )
     })
 
@@ -18,6 +19,6 @@ export class GameService {
   }
 
   static checkForMatch(firstCard: MemoryCard, secondCard: MemoryCard): boolean {
-    return firstCard.animalId === secondCard.animalId
+    return firstCard.itemId === secondCard.itemId
   }
 }
