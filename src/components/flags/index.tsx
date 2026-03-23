@@ -12,8 +12,10 @@ export function Israel({ size = 80 }: { size?: number }) {
       <Rect width={W} height={H} fill="white" />
       <Rect y="8" width={W} height="8" fill="#0038B8" />
       <Rect y="44" width={W} height="8" fill="#0038B8" />
-      <Polygon points="45,20 52,32 38,32" fill="none" stroke="#0038B8" strokeWidth="2" />
-      <Polygon points="45,40 52,28 38,28" fill="none" stroke="#0038B8" strokeWidth="2" />
+      {/* Triangle pointing up */}
+      <Polygon points="45,19 53,33 37,33" fill="none" stroke="#0038B8" strokeWidth="2" />
+      {/* Triangle pointing down */}
+      <Polygon points="45,41 53,27 37,27" fill="none" stroke="#0038B8" strokeWidth="2" />
     </Svg>
   )
 }
