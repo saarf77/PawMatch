@@ -4,7 +4,7 @@ import {
   StyleSheet, LayoutChangeEvent,
 } from "react-native"
 import { MemoryCardComponent } from "./MemoryCard"
-import type { MemoryCard, Difficulty } from "../types"
+import type { MemoryCard, Difficulty, Category } from "../types"
 import { formatTime } from "../utils/helpers"
 
 interface Props {
@@ -24,6 +24,7 @@ interface Props {
   onUseClue: () => void
   cluesRemaining: number
   isShuffling?: boolean
+  category?: Category
 }
 
 function getGridCols(numCards: number): number {
@@ -50,6 +51,7 @@ export function GameScreen({
   onCardClick, onBack, onRestart,
   isRunning, onTimeTick, timerKey,
   userName, moves, onUseClue, cluesRemaining,
+  category = "animals",
 }: Props) {
   const [elapsed, setElapsed] = useState(0)
   const [gridSize, setGridSize] = useState({ width: 0, height: 0 })
@@ -137,6 +139,7 @@ export function GameScreen({
                     onClick={() => onCardClick(index)}
                     cardWidth={cardW}
                     cardHeight={cardH}
+                    category={category}
                   />
                 </View>
               )

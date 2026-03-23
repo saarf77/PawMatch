@@ -8,13 +8,14 @@ import { MenuScreen } from "./src/components/MenuScreen"
 import { GameScreen } from "./src/components/GameScreen"
 import { GameCompleted } from "./src/components/GameCompleted"
 import { LeaderboardScreen } from "./src/components/LeaderboardScreen"
+import { CategoryScreen } from "./src/components/CategoryScreen"
 
 import { GameService } from "./src/services/GameService"
 import { LeaderboardService } from "./src/services/LeaderboardService"
 import { NameGeneratorService } from "./src/services/NameGeneratorService"
 import { SoundService } from "./src/services/SoundService"
 
-import type { GameState, MemoryCard, User, Difficulty, GameStats } from "./src/types"
+import type { GameState, MemoryCard, User, Difficulty, GameStats, Category } from "./src/types"
 import { DIFFICULTY_CONFIG } from "./src/utils/constants"
 import { shuffleUnmatchedCards, findMatchingCard, calculateScore } from "./src/utils/gameUtils"
 
@@ -33,6 +34,9 @@ export default function App() {
   const [timerKey, setTimerKey] = useState(0)
   const [cluesRemaining, setCluesRemaining] = useState(1)
   const [isShuffling, setIsShuffling] = useState(false)
+  const [category, setCategory] = useState<Category>("animals")
+  const [pendingPairs, setPendingPairs] = useState(3)
+  const [pendingDifficulty, setPendingDifficulty] = useState<Difficulty>("easy")
   const shuffleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleNameSubmit = (name: string) => {
@@ -41,10 +45,17 @@ export default function App() {
     setGameState("menu")
   }
 
-  const startGame = useCallback((pairs: number, diff: Difficulty) => {
+  const handleSelectPairs = useCallback((pairs: number, diff: Difficulty) => {
+    setPendingPairs(pairs)
+    setPendingDifficulty(diff)
+    setGameState("category")
+  }, [])
+
+  const startGame = useCallback((pairs: number, diff: Difficulty, cat: Category) => {
     setNumPairs(pairs)
     setDifficulty(diff)
-    setCards(GameService.createCards(pairs))
+    setCategory(cat)
+    setCards(GameService.createCards(pairs, cat))
     setFlippedIndexes([])
     setMatches(0)
     setMoves(0)
@@ -93,6 +104,7 @@ export default function App() {
                 moves,
                 score: finalScore,
                 difficulty,
+                category,
                 date: new Date().toLocaleDateString(),
               }
               LeaderboardService.saveScore(score).catch(console.error)
@@ -178,9 +190,18 @@ export default function App() {
         {gameState === "menu" && (
           <MenuScreen
             userName={user?.name}
-            onStartGame={startGame}
+            onSelectPairs={handleSelectPairs}
             onShowLeaderboard={() => setGameState("leaderboard")}
             onReturnHome={returnHome}
+          />
+        )}
+
+        {gameState === "category" && (
+          <CategoryScreen
+            pairs={pendingPairs}
+            difficulty={pendingDifficulty}
+            onSelectCategory={(cat) => startGame(pendingPairs, pendingDifficulty, cat)}
+            onBack={() => setGameState("menu")}
           />
         )}
 
@@ -196,7 +217,7 @@ export default function App() {
             numPairs={numPairs}
             onCardClick={handleCardClick}
             onBack={() => setGameState("menu")}
-            onRestart={() => startGame(numPairs, difficulty)}
+            onRestart={() => startGame(numPairs, difficulty, category)}
             isRunning={isRunning}
             onTimeTick={handleTimeTick}
             timerKey={timerKey}
@@ -206,13 +227,14 @@ export default function App() {
             onUseClue={handleUseClue}
             cluesRemaining={cluesRemaining}
             isShuffling={isShuffling}
+            category={category}
           />
         )}
 
         {gameState === "completed" && (
           <GameCompleted
             stats={gameStats}
-            onPlayAgain={() => startGame(numPairs, difficulty)}
+            onPlayAgain={() => startGame(numPairs, difficulty, category)}
             onBackToMenu={() => setGameState("menu")}
           />
         )}

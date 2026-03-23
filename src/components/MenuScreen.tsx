@@ -5,7 +5,7 @@ import type { Difficulty } from "../types"
 
 interface Props {
   userName?: string
-  onStartGame: (pairs: number, difficulty: Difficulty) => void
+  onSelectPairs: (pairs: number, difficulty: Difficulty) => void
   onShowLeaderboard: () => void
   onReturnHome: () => void
 }
@@ -24,7 +24,7 @@ const DIFFICULTY_COLORS: Record<Difficulty, { bg: string; border: string; btn: s
   hard: { bg: "#7F1D1D", border: "#DC2626", btn: "#991B1B" },
 }
 
-export function MenuScreen({ userName, onStartGame, onShowLeaderboard, onReturnHome }: Props) {
+export function MenuScreen({ userName, onSelectPairs, onShowLeaderboard, onReturnHome }: Props) {
   return (
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
       {/* Header */}
@@ -52,7 +52,7 @@ export function MenuScreen({ userName, onStartGame, onShowLeaderboard, onReturnH
                 <TouchableOpacity
                   key={pairs}
                   style={[styles.pairBtn, { backgroundColor: colors.btn, borderColor: colors.border }]}
-                  onPress={() => onStartGame(pairs, diff)}
+                  onPress={() => onSelectPairs(pairs, diff)}
                   activeOpacity={0.7}
                 >
                   <Text style={styles.pairBtnText}>{pairs} Pairs</Text>

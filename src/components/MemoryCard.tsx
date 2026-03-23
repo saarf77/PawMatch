@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from "react"
 import { TouchableOpacity, View, Text, Animated, StyleSheet } from "react-native"
-import type { MemoryCard } from "../types"
+import type { MemoryCard, Category } from "../types"
 import { ANIMAL_COMPONENTS } from "./animals"
+import { FLAG_COMPONENTS } from "./flags"
+import { CAR_COMPONENTS } from "./cars"
 
 interface Props {
   card: MemoryCard
@@ -9,9 +11,10 @@ interface Props {
   onClick: () => void
   cardWidth: number
   cardHeight: number
+  category?: Category
 }
 
-export function MemoryCardComponent({ card, isFlipped, onClick, cardWidth, cardHeight }: Props) {
+export function MemoryCardComponent({ card, isFlipped, onClick, cardWidth, cardHeight, category = "animals" }: Props) {
   // scaleX flip trick — works with useNativeDriver unlike rotateY
   const flipAnim = useRef(new Animated.Value(isFlipped ? 1 : 0)).current
   const scaleAnim = useRef(new Animated.Value(1)).current
@@ -39,8 +42,9 @@ export function MemoryCardComponent({ card, isFlipped, onClick, cardWidth, cardH
   const backOpacity  = flipAnim.interpolate({ inputRange: [0.49, 0.5], outputRange: [1, 0] })
   const frontOpacity = flipAnim.interpolate({ inputRange: [0.49, 0.5], outputRange: [0, 1] })
 
-  const AnimalSVG = ANIMAL_COMPONENTS[card.animalId]
-  const svgSize = Math.floor(cardHeight * 0.58)
+  const ItemSVG = category === "flags" ? FLAG_COMPONENTS[card.itemId] : category === "cars" ? CAR_COMPONENTS[card.itemId] : ANIMAL_COMPONENTS[card.itemId]
+  const isFlag = category === "flags"
+  const svgSize = isFlag ? Math.floor(cardWidth * 0.82) : Math.floor(cardHeight * 0.58)
   const labelFontSize = Math.max(8, Math.floor(cardWidth * 0.13))
 
   return (
@@ -70,8 +74,8 @@ export function MemoryCardComponent({ card, isFlipped, onClick, cardWidth, cardH
           { width: cardWidth, height: cardHeight },
           { transform: [{ scaleX: frontScaleX }], opacity: frontOpacity, position: "absolute" },
         ]}>
-          <View style={styles.animalArea}>
-            {AnimalSVG && <AnimalSVG size={svgSize} />}
+          <View style={[styles.animalArea, isFlag && styles.flagArea]}>
+            {ItemSVG && <ItemSVG size={svgSize} />}
           </View>
           <View style={[styles.label, card.isMatched && styles.labelMatched]}>
             <Text
@@ -125,6 +129,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingTop: 2,
+  },
+  flagArea: {
+    paddingTop: 0,
+    paddingHorizontal: 4,
   },
   label: {
     backgroundColor: "#F1F5F9",

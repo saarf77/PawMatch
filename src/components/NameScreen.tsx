@@ -9,7 +9,7 @@ interface Props {
   onNameSubmit: (name: string) => void
 }
 
-const ANIMAL_ROW = ["🦁", "🐯", "🐘", "🦒", "🐻", "🦊", "🐬", "🦄"]
+const ICON_ROW = ["🦁", "🐯", "🇮🇱", "🇩🇪", "🐻", "🇺🇸", "🐬", "🇯🇵"]
 
 export function NameScreen({ onNameSubmit }: Props) {
   const [showInput, setShowInput] = useState(false)
@@ -31,7 +31,7 @@ export function NameScreen({ onNameSubmit }: Props) {
       <View style={styles.inner}>
         {/* Animal row */}
         <View style={styles.emojiRow}>
-          {ANIMAL_ROW.map((emoji, i) => (
+          {ICON_ROW.map((emoji, i) => (
             <Text key={i} style={styles.emoji}>{emoji}</Text>
           ))}
         </View>
@@ -39,7 +39,7 @@ export function NameScreen({ onNameSubmit }: Props) {
         {/* Title */}
         <View style={styles.titleBlock}>
           <Text style={styles.title}>Mind Pairs</Text>
-          <Text style={styles.subtitle}>The animal memory game</Text>
+          <Text style={styles.subtitle}>Animals · Flags · More</Text>
         </View>
 
         {/* Play button */}
