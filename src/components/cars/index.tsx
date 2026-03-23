@@ -1,73 +1,66 @@
 import React from "react"
 import { Image, View } from "react-native"
 
-const logos: Record<string, any> = {
-  bmw:         require("../../../assets/cars/bmw.svg"),
-  mercedes:    require("../../../assets/cars/mercedes.svg"),
-  ferrari:     require("../../../assets/cars/ferrari.svg"),
-  audi:        require("../../../assets/cars/audi.svg"),
-  toyota:      require("../../../assets/cars/toyota.svg"),
-  volkswagen:  require("../../../assets/cars/volkswagen.svg"),
-  porsche:     require("../../../assets/cars/porsche.svg"),
-  lamborghini: require("../../../assets/cars/lamborghini.svg"),
-  ford:        require("../../../assets/cars/ford.svg"),
-  chevrolet:   require("../../../assets/cars/chevrolet.svg"),
-  honda:       require("../../../assets/cars/honda.svg"),
-  nissan:      require("../../../assets/cars/nissan.svg"),
-  hyundai:     require("../../../assets/cars/hyundai.svg"),
-  kia:         require("../../../assets/cars/kia.svg"),
-  mazda:       require("../../../assets/cars/mazda.svg"),
-  subaru:      require("../../../assets/cars/subaru.svg"),
-  rollsroyce:  require("../../../assets/cars/rollsroyce.svg"),
-  bentley:     require("../../../assets/cars/bentley.svg"),
-  maserati:    require("../../../assets/cars/maserati.svg"),
-  jaguar:      require("../../../assets/cars/jaguar.svg"),
-  volvo:       require("../../../assets/cars/volvo.svg"),
-  peugeot:     require("../../../assets/cars/peugeot.svg"),
-  renault:     require("../../../assets/cars/renault.svg"),
-  tesla:       require("../../../assets/cars/tesla.svg"),
-  bugatti:     require("../../../assets/cars/bugatti.svg"),
+// Pre-require all at module level to avoid deep-freeze issues
+const bmw         = require("../../../assets/cars/bmw.svg")
+const mercedes    = require("../../../assets/cars/mercedes.svg")
+const ferrari     = require("../../../assets/cars/ferrari.svg")
+const audi        = require("../../../assets/cars/audi.svg")
+const toyota      = require("../../../assets/cars/toyota.svg")
+const volkswagen  = require("../../../assets/cars/volkswagen.svg")
+const porsche     = require("../../../assets/cars/porsche.svg")
+const lamborghini = require("../../../assets/cars/lamborghini.svg")
+const ford        = require("../../../assets/cars/ford.svg")
+const chevrolet   = require("../../../assets/cars/chevrolet.svg")
+const honda       = require("../../../assets/cars/honda.svg")
+const nissan      = require("../../../assets/cars/nissan.svg")
+const hyundai     = require("../../../assets/cars/hyundai.svg")
+const kia         = require("../../../assets/cars/kia.svg")
+const mazda       = require("../../../assets/cars/mazda.svg")
+const subaru      = require("../../../assets/cars/subaru.svg")
+const rollsroyce  = require("../../../assets/cars/rollsroyce.svg")
+const bentley     = require("../../../assets/cars/bentley.svg")
+const maserati    = require("../../../assets/cars/maserati.svg")
+const jaguar      = require("../../../assets/cars/jaguar.svg")
+const volvo       = require("../../../assets/cars/volvo.svg")
+const peugeot     = require("../../../assets/cars/peugeot.svg")
+const renault     = require("../../../assets/cars/renault.svg")
+const tesla       = require("../../../assets/cars/tesla.svg")
+const bugatti     = require("../../../assets/cars/bugatti.svg")
+
+function CarLogo({ source, size = 80 }: { source: any; size?: number }) {
+  return (
+    <View style={{ width: size, height: size, justifyContent: "center", alignItems: "center", backgroundColor: "white", borderRadius: 8, padding: 6 }}>
+      <Image source={source} style={{ width: size * 0.82, height: size * 0.82 }} resizeMode="contain" />
+    </View>
+  )
 }
 
-function makeCarComponent(carId: string): React.ComponentType<{ size?: number }> {
-  return function CarComponent({ size = 80 }: { size?: number }) {
-    return (
-      <View style={{ width: size, height: size, justifyContent: "center", alignItems: "center", backgroundColor: "white", borderRadius: 8, padding: 6 }}>
-        <Image
-          source={logos[carId]}
-          style={{ width: size * 0.82, height: size * 0.82 }}
-          resizeMode="contain"
-        />
-      </View>
-    )
-  }
-}
-
-export const BMW         = makeCarComponent("bmw")
-export const Mercedes    = makeCarComponent("mercedes")
-export const Ferrari     = makeCarComponent("ferrari")
-export const Audi        = makeCarComponent("audi")
-export const Toyota      = makeCarComponent("toyota")
-export const Volkswagen  = makeCarComponent("volkswagen")
-export const Porsche     = makeCarComponent("porsche")
-export const Lamborghini = makeCarComponent("lamborghini")
-export const Ford        = makeCarComponent("ford")
-export const Chevrolet   = makeCarComponent("chevrolet")
-export const Honda       = makeCarComponent("honda")
-export const Nissan      = makeCarComponent("nissan")
-export const Hyundai     = makeCarComponent("hyundai")
-export const Kia         = makeCarComponent("kia")
-export const Mazda       = makeCarComponent("mazda")
-export const Subaru      = makeCarComponent("subaru")
-export const RollsRoyce  = makeCarComponent("rollsroyce")
-export const Bentley     = makeCarComponent("bentley")
-export const Maserati    = makeCarComponent("maserati")
-export const Jaguar      = makeCarComponent("jaguar")
-export const Volvo       = makeCarComponent("volvo")
-export const Peugeot     = makeCarComponent("peugeot")
-export const Renault     = makeCarComponent("renault")
-export const Tesla       = makeCarComponent("tesla")
-export const Bugatti     = makeCarComponent("bugatti")
+export function BMW({ size = 80 }: { size?: number })         { return <CarLogo source={bmw} size={size} /> }
+export function Mercedes({ size = 80 }: { size?: number })    { return <CarLogo source={mercedes} size={size} /> }
+export function Ferrari({ size = 80 }: { size?: number })     { return <CarLogo source={ferrari} size={size} /> }
+export function Audi({ size = 80 }: { size?: number })        { return <CarLogo source={audi} size={size} /> }
+export function Toyota({ size = 80 }: { size?: number })      { return <CarLogo source={toyota} size={size} /> }
+export function Volkswagen({ size = 80 }: { size?: number })  { return <CarLogo source={volkswagen} size={size} /> }
+export function Porsche({ size = 80 }: { size?: number })     { return <CarLogo source={porsche} size={size} /> }
+export function Lamborghini({ size = 80 }: { size?: number }) { return <CarLogo source={lamborghini} size={size} /> }
+export function Ford({ size = 80 }: { size?: number })        { return <CarLogo source={ford} size={size} /> }
+export function Chevrolet({ size = 80 }: { size?: number })   { return <CarLogo source={chevrolet} size={size} /> }
+export function Honda({ size = 80 }: { size?: number })       { return <CarLogo source={honda} size={size} /> }
+export function Nissan({ size = 80 }: { size?: number })      { return <CarLogo source={nissan} size={size} /> }
+export function Hyundai({ size = 80 }: { size?: number })     { return <CarLogo source={hyundai} size={size} /> }
+export function Kia({ size = 80 }: { size?: number })         { return <CarLogo source={kia} size={size} /> }
+export function Mazda({ size = 80 }: { size?: number })       { return <CarLogo source={mazda} size={size} /> }
+export function Subaru({ size = 80 }: { size?: number })      { return <CarLogo source={subaru} size={size} /> }
+export function RollsRoyce({ size = 80 }: { size?: number })  { return <CarLogo source={rollsroyce} size={size} /> }
+export function Bentley({ size = 80 }: { size?: number })     { return <CarLogo source={bentley} size={size} /> }
+export function Maserati({ size = 80 }: { size?: number })    { return <CarLogo source={maserati} size={size} /> }
+export function Jaguar({ size = 80 }: { size?: number })      { return <CarLogo source={jaguar} size={size} /> }
+export function Volvo({ size = 80 }: { size?: number })       { return <CarLogo source={volvo} size={size} /> }
+export function Peugeot({ size = 80 }: { size?: number })     { return <CarLogo source={peugeot} size={size} /> }
+export function Renault({ size = 80 }: { size?: number })     { return <CarLogo source={renault} size={size} /> }
+export function Tesla({ size = 80 }: { size?: number })       { return <CarLogo source={tesla} size={size} /> }
+export function Bugatti({ size = 80 }: { size?: number })     { return <CarLogo source={bugatti} size={size} /> }
 
 export const CAR_COMPONENTS: Record<string, React.ComponentType<{ size?: number }>> = {
   bmw: BMW, mercedes: Mercedes, ferrari: Ferrari, audi: Audi,
