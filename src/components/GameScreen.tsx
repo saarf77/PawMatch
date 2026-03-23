@@ -171,7 +171,7 @@ export function GameScreen({
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    paddingTop: 48,
+    paddingTop: 8,
     paddingHorizontal: 8,
     paddingBottom: 8,
   },
