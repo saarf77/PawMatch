@@ -1,6 +1,7 @@
 import React from "react"
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native"
 import type { Category, Difficulty } from "../types"
+import { useScale } from "../utils/useScale"
 
 interface Props {
   pairs: number
@@ -16,26 +17,29 @@ const CATEGORIES: { id: Category; label: string; emoji: string; desc: string }[]
 ]
 
 export function CategoryScreen({ pairs, difficulty, onSelectCategory, onBack }: Props) {
+  const { scale } = useScale()
+  const cardWidth = Math.round(140 * scale)
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backBtn} onPress={onBack}>
-        <Text style={styles.backText}>◀ Back</Text>
+        <Text style={[styles.backText, { fontSize: Math.round(14 * scale) }]}>◀ Back</Text>
       </TouchableOpacity>
 
-      <Text style={styles.title}>Choose a Category</Text>
-      <Text style={styles.subtitle}>{pairs} pairs · {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</Text>
+      <Text style={[styles.title, { fontSize: Math.round(30 * scale) }]}>Choose a Category</Text>
+      <Text style={[styles.subtitle, { fontSize: Math.round(15 * scale) }]}>{pairs} pairs · {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</Text>
 
       <View style={styles.grid}>
         {CATEGORIES.map((cat) => (
           <TouchableOpacity
             key={cat.id}
-            style={styles.card}
+            style={[styles.card, { width: cardWidth, paddingVertical: Math.round(28 * scale) }]}
             onPress={() => onSelectCategory(cat.id)}
             activeOpacity={0.75}
           >
-            <Text style={styles.emoji}>{cat.emoji}</Text>
-            <Text style={styles.label}>{cat.label}</Text>
-            <Text style={styles.desc}>{cat.desc}</Text>
+            <Text style={[styles.emoji, { fontSize: Math.round(44 * scale) }]}>{cat.emoji}</Text>
+            <Text style={[styles.label, { fontSize: Math.round(20 * scale) }]}>{cat.label}</Text>
+            <Text style={[styles.desc, { fontSize: Math.round(13 * scale) }]}>{cat.desc}</Text>
           </TouchableOpacity>
         ))}
       </View>

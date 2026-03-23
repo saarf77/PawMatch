@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { MemoryCardComponent } from "./MemoryCard"
 import type { MemoryCard, Difficulty, Category } from "../types"
 import { formatTime } from "../utils/helpers"
+import { useScale } from "../utils/useScale"
 
 interface Props {
   cards: MemoryCard[]
@@ -58,6 +59,7 @@ export function GameScreen({
   const [gridSize, setGridSize] = useState({ width: 0, height: 0 })
   const insets = useSafeAreaInsets()
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const { scale } = useScale()
 
   useEffect(() => { setElapsed(0) }, [timerKey])
 
@@ -88,8 +90,9 @@ export function GameScreen({
   let cardW = 60
   let cardH = 76
 
-  const MAX_CARD_W = 130
-  const MAX_CARD_H = 175
+  // Scale the max card size by screen scale so cards fill iPad properly
+  const MAX_CARD_W = Math.round(130 * scale)
+  const MAX_CARD_H = Math.round(175 * scale)
 
   if (gridSize.width > 0 && gridSize.height > 0) {
     const maxCardW = Math.floor((gridSize.width  - GAP * (cols + 1)) / cols)
@@ -98,10 +101,15 @@ export function GameScreen({
     cardH = Math.min(maxCardH, Math.floor(cardW * 1.35))
     cardW = Math.min(cardW, Math.floor(cardH / 1.35))
     cardH = Math.floor(cardW * 1.35)
-    // Cap for tablets / large screens
+    // Cap so cards don't grow unboundedly on very large screens
     cardW = Math.min(cardW, MAX_CARD_W)
     cardH = Math.min(cardH, MAX_CARD_H)
   }
+
+  const chipFontSize = Math.round(12 * scale)
+  const actionFontSize = Math.round(14 * scale)
+  const actionBtnHeight = Math.round(44 * scale)
+  const playerNameFontSize = Math.round(12 * scale)
 
   return (
     <View style={[styles.screen, { paddingTop: insets.top + 4 }]}>
@@ -109,26 +117,26 @@ export function GameScreen({
       {/* HUD */}
       <View style={styles.hud}>
         {userName ? (
-          <Text style={styles.playerName}>
+          <Text style={[styles.playerName, { fontSize: playerNameFontSize }]}>
             Playing as <Text style={styles.bold}>{userName}</Text>
           </Text>
         ) : null}
         <View style={styles.hudRow}>
-          <View style={styles.chip}>
-            <Text style={styles.chipText}>⭐ {matches}/{numPairs}</Text>
+          <View style={[styles.chip, { paddingHorizontal: Math.round(10 * scale), paddingVertical: Math.round(5 * scale) }]}>
+            <Text style={[styles.chipText, { fontSize: chipFontSize }]}>⭐ {matches}/{numPairs}</Text>
           </View>
-          <View style={styles.chip}>
-            <Text style={styles.chipText}>🕐 {formatTime(elapsed)}</Text>
+          <View style={[styles.chip, { paddingHorizontal: Math.round(10 * scale), paddingVertical: Math.round(5 * scale) }]}>
+            <Text style={[styles.chipText, { fontSize: chipFontSize }]}>🕐 {formatTime(elapsed)}</Text>
           </View>
-          <View style={styles.chip}>
-            <Text style={styles.chipText}>⚡ {moves}</Text>
+          <View style={[styles.chip, { paddingHorizontal: Math.round(10 * scale), paddingVertical: Math.round(5 * scale) }]}>
+            <Text style={[styles.chipText, { fontSize: chipFontSize }]}>⚡ {moves}</Text>
           </View>
           <TouchableOpacity
-            style={[styles.chip, canUseClue ? styles.clueActive : styles.clueDisabled]}
+            style={[styles.chip, canUseClue ? styles.clueActive : styles.clueDisabled, { paddingHorizontal: Math.round(10 * scale), paddingVertical: Math.round(5 * scale) }]}
             onPress={onUseClue}
             disabled={!canUseClue}
           >
-            <Text style={[styles.chipText, !canUseClue && styles.chipDim]}>💡 {cluesRemaining}</Text>
+            <Text style={[styles.chipText, { fontSize: chipFontSize }, !canUseClue && styles.chipDim]}>💡 {cluesRemaining}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -158,11 +166,11 @@ export function GameScreen({
 
       {/* Buttons */}
       <View style={styles.actions}>
-        <TouchableOpacity style={styles.actionBtn} onPress={onBack} activeOpacity={0.8}>
-          <Text style={styles.actionBtnText}>◀ Menu</Text>
+        <TouchableOpacity style={[styles.actionBtn, { height: actionBtnHeight }]} onPress={onBack} activeOpacity={0.8}>
+          <Text style={[styles.actionBtnText, { fontSize: actionFontSize }]}>◀ Menu</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionBtn} onPress={onRestart} activeOpacity={0.8}>
-          <Text style={styles.actionBtnText}>↺ Restart</Text>
+        <TouchableOpacity style={[styles.actionBtn, { height: actionBtnHeight }]} onPress={onRestart} activeOpacity={0.8}>
+          <Text style={[styles.actionBtnText, { fontSize: actionFontSize }]}>↺ Restart</Text>
         </TouchableOpacity>
       </View>
 

@@ -32,6 +32,6 @@ export const calculateScore = (
 
 export const findMatchingCard = (cards: MemoryCard[], selectedCard: MemoryCard): number => {
   return cards.findIndex(
-    (card) => !card.isMatched && !card.isHighlighted && card.id !== selectedCard.id && card.animalId === selectedCard.animalId,
+    (card) => !card.isMatched && !card.isHighlighted && card.id !== selectedCard.id && card.itemId === selectedCard.itemId,
   )
 }
