@@ -9,7 +9,7 @@ interface Props {
   onNameSubmit: (name: string) => void
 }
 
-const ICON_ROW = ["🦁", "🐯", "🇮🇱", "🇩🇪", "🐻", "🇺🇸", "🐬", "🇯🇵"]
+const ICON_ROW = ["🦁", "🇮🇱", "🚗", "🐯", "🇩🇪", "🏎️", "🐻", "🇺🇸"]
 
 export function NameScreen({ onNameSubmit }: Props) {
   const [showInput, setShowInput] = useState(false)
