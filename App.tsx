@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from "react"
 import { StyleSheet, Platform, StatusBar } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
 
 import { NameScreen } from "./src/components/NameScreen"
 import { MenuScreen } from "./src/components/MenuScreen"
@@ -175,6 +175,7 @@ export default function App() {
   }
 
   return (
+    <SafeAreaProvider>
     <LinearGradient
       colors={["#6D28D9", "#4F46E5", "#0891B2"]}
       start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
@@ -240,6 +241,7 @@ export default function App() {
         )}
       </SafeAreaView>
     </LinearGradient>
+    </SafeAreaProvider>
   )
 }
 
