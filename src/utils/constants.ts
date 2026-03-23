@@ -138,7 +138,7 @@ export const DIFFICULTY_CONFIG = {
   hard: {
     timeBonus: 10,
     label: "Hard",
-    pairs: [15, 16, 18],
+    pairs: [16, 18],
     shuffleCards: true,
     scoreMultiplier: 3,
   },
