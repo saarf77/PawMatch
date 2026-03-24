@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import { storageGet, storageSet } from "./storage"
 import type { CardTheme } from "../types"
 
 const STORAGE_KEY = "card_theme"
@@ -12,18 +12,14 @@ export const THEMES: Record<CardTheme, { back: string; border: string; question:
 }
 
 export async function saveTheme(theme: CardTheme): Promise<void> {
-  await AsyncStorage.setItem(STORAGE_KEY, theme)
+  await storageSet(STORAGE_KEY, theme)
 }
 
 export async function loadTheme(): Promise<CardTheme> {
   try {
-    const stored = await AsyncStorage.getItem(STORAGE_KEY)
-    if (stored && stored in THEMES) {
-      return stored as CardTheme
-    }
-  } catch {
-    // fall through to default
-  }
+    const stored = await storageGet(STORAGE_KEY)
+    if (stored && stored in THEMES) return stored as CardTheme
+  } catch { /* ignore */ }
   return "classic"
 }
 
