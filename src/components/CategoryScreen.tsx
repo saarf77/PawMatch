@@ -20,7 +20,7 @@ const CATEGORIES: { id: Category; label: string; emoji: string; desc: string }[]
 const GAME_MODES: { id: GameMode; label: string; emoji: string; desc: string }[] = [
   { id: "classic",     label: "Classic",     emoji: "🃏", desc: "Standard memory game" },
   { id: "speed",       label: "Speed",       emoji: "⚡", desc: "Beat your best time" },
-  { id: "oneshot",     label: "One-Shot",    emoji: "💀", desc: "One wrong = game over" },
+  { id: "oneshot",     label: "3 Lives",     emoji: "❤️", desc: "3 wrong = game over" },
   { id: "suddenDeath", label: "Sudden Death",emoji: "🔥", desc: "Wrong flip = all revealed" },
 ]
 
