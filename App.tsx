@@ -51,6 +51,7 @@ export default function App() {
   const [pendingPairs, setPendingPairs] = useState(3)
   const [pendingDifficulty, setPendingDifficulty] = useState<Difficulty>("easy")
   const [isGameOver, setIsGameOver] = useState(false)
+  const [livesRemaining, setLivesRemaining] = useState(3)
   const [lastFlipResult, setLastFlipResult] = useState<"match" | "mismatch" | null>(null)
 
   // Campaign
@@ -92,6 +93,7 @@ export default function App() {
     setTimerKey((k) => k + 1)
     setCluesRemaining(1)
     setIsGameOver(false)
+    setLivesRemaining(3)
     setLastFlipResult(null)
     setGameState("playing")
   }, [])
@@ -158,12 +160,18 @@ export default function App() {
       } else {
         setLastFlipResult("mismatch")
         if (gameMode === "oneshot") {
-          // Signal game over after showing the mismatch
           setTimeout(() => {
-            setIsGameOver(true)
-            setIsRunning(false)
+            setLivesRemaining((lives) => {
+              const newLives = lives - 1
+              if (newLives <= 0) {
+                setIsGameOver(true)
+                setIsRunning(false)
+              }
+              return newLives
+            })
             setFlippedIndexes([])
             setIsChecking(false)
+            setLastFlipResult(null)
           }, 800)
         } else {
           setTimeout(() => {
@@ -359,6 +367,7 @@ export default function App() {
               category={category}
               gameMode={gameMode}
               isGameOver={isGameOver}
+              livesRemaining={livesRemaining}
               lastFlipResult={lastFlipResult}
             />
           )}

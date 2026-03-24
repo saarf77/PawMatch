@@ -40,6 +40,9 @@ export function TwoPlayerGameScreen({ p1Name, p2Name, pairs, category, onGameEnd
   const [locked, setLocked] = useState(false)
   const [lastResult, setLastResult] = useState<"match" | "mismatch" | null>(null)
   const [gameOver, setGameOver] = useState(false)
+  const [winner, setWinner] = useState<string | "tie" | null>(null)
+  const [finalP1, setFinalP1] = useState(0)
+  const [finalP2, setFinalP2] = useState(0)
 
   const totalMatched = p1Matches + p2Matches
 
@@ -84,11 +87,13 @@ export function TwoPlayerGameScreen({ p1Name, p2Name, pairs, category, onGameEnd
 
           if (newTotal >= pairs) {
             setGameOver(true)
-            let winner: string | "tie"
-            if (newP1 > newP2) winner = p1Name
-            else if (newP2 > newP1) winner = p2Name
-            else winner = "tie"
-            onGameEnd(winner, newP1, newP2)
+            let w: string | "tie"
+            if (newP1 > newP2) w = p1Name
+            else if (newP2 > newP1) w = p2Name
+            else w = "tie"
+            setWinner(w)
+            setFinalP1(newP1)
+            setFinalP2(newP2)
           }
           // Same player keeps turn on match — do NOT switch
         }, MISMATCH_DELAY_MS)
@@ -113,6 +118,7 @@ export function TwoPlayerGameScreen({ p1Name, p2Name, pairs, category, onGameEnd
     setLocked(false)
     setLastResult(null)
     setGameOver(false)
+    setWinner(null)
   }
 
   const handleBack = () => {
@@ -194,6 +200,30 @@ export function TwoPlayerGameScreen({ p1Name, p2Name, pairs, category, onGameEnd
           <Text style={styles.actionBtnText}>Restart</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Winner overlay */}
+      {gameOver && winner !== null && (
+        <View style={styles.overlay}>
+          <View style={styles.overlayBox}>
+            <Text style={styles.overlayEmoji}>{winner === "tie" ? "🤝" : "🏆"}</Text>
+            <Text style={styles.overlayTitle}>
+              {winner === "tie" ? "It's a Tie!" : `${winner} Wins!`}
+            </Text>
+            <View style={styles.overlayScores}>
+              <Text style={styles.overlayScore}>{p1Name}: {finalP1}</Text>
+              <Text style={styles.overlayScore}>{p2Name}: {finalP2}</Text>
+            </View>
+            <View style={styles.overlayButtons}>
+              <TouchableOpacity style={styles.overlayBtnPrimary} onPress={handleRestart} activeOpacity={0.8}>
+                <Text style={styles.overlayBtnText}>Play Again</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.overlayBtnSecondary} onPress={onBack} activeOpacity={0.8}>
+                <Text style={styles.overlayBtnText}>Menu</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
 
     </View>
   )
@@ -298,4 +328,37 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 14,
   },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.75)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 100,
+  },
+  overlayBox: {
+    width: "82%",
+    backgroundColor: "#1E1B4B",
+    borderRadius: 24,
+    borderWidth: 2,
+    borderColor: "#A78BFA",
+    padding: 28,
+    alignItems: "center",
+    gap: 12,
+  },
+  overlayEmoji: { fontSize: 56 },
+  overlayTitle: { fontSize: 32, fontWeight: "900", color: "white", textAlign: "center" },
+  overlayScores: { gap: 4, alignItems: "center" },
+  overlayScore: { fontSize: 16, color: "rgba(255,255,255,0.8)", fontWeight: "600" },
+  overlayButtons: { flexDirection: "row", gap: 12, marginTop: 8 },
+  overlayBtnPrimary: {
+    height: 48, paddingHorizontal: 24, borderRadius: 14,
+    backgroundColor: "#7C3AED", justifyContent: "center", alignItems: "center",
+  },
+  overlayBtnSecondary: {
+    height: 48, paddingHorizontal: 24, borderRadius: 14,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    borderWidth: 1, borderColor: "rgba(255,255,255,0.3)",
+    justifyContent: "center", alignItems: "center",
+  },
+  overlayBtnText: { color: "white", fontWeight: "800", fontSize: 15 },
 })

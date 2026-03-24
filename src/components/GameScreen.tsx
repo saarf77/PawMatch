@@ -30,6 +30,7 @@ interface Props {
   gameMode?: GameMode
   onGameOver?: () => void
   isGameOver?: boolean
+  livesRemaining?: number
   lastFlipResult?: "match" | "mismatch" | null
 }
 
@@ -61,6 +62,7 @@ export function GameScreen({
   gameMode,
   onGameOver,
   isGameOver = false,
+  livesRemaining = 3,
   lastFlipResult,
 }: Props) {
   const [elapsed, setElapsed] = useState(0)
@@ -152,6 +154,11 @@ export function GameScreen({
               <Text style={[styles.chipText, { fontSize: chipFontSize }]}>Speed</Text>
             </View>
           )}
+          {gameMode === "oneshot" && (
+            <View style={[styles.chip, { paddingHorizontal: Math.round(10 * scale), paddingVertical: Math.round(5 * scale), backgroundColor: "rgba(239,68,68,0.25)", borderColor: "rgba(239,68,68,0.5)" }]}>
+              <Text style={[styles.chipText, { fontSize: chipFontSize }]}>{"❤️".repeat(livesRemaining)}{"🖤".repeat(Math.max(0, 3 - livesRemaining))}</Text>
+            </View>
+          )}
           <View style={[styles.chip, { paddingHorizontal: Math.round(10 * scale), paddingVertical: Math.round(5 * scale) }]}>
             <Text style={[styles.chipText, { fontSize: chipFontSize }]}>⭐ {matches}/{numPairs}</Text>
           </View>
@@ -211,8 +218,9 @@ export function GameScreen({
       {gameMode === "oneshot" && isGameOver && (
         <View style={styles.gameOverOverlay}>
           <View style={styles.gameOverBox}>
+            <Text style={{ fontSize: 48, textAlign: "center" }}>💔</Text>
             <Text style={styles.gameOverTitle}>GAME OVER</Text>
-            <Text style={styles.gameOverMessage}>Wrong match! Better luck next time.</Text>
+            <Text style={styles.gameOverMessage}>You used all 3 lives!</Text>
             <View style={styles.gameOverButtons}>
               <TouchableOpacity style={styles.gameOverBtn} onPress={onRestart} activeOpacity={0.8}>
                 <Text style={styles.gameOverBtnText}>Try Again</Text>
