@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { TouchableOpacity, View, Text, Animated, StyleSheet } from "react-native"
 import type { MemoryCard, Category } from "../types"
 import { ANIMAL_COMPONENTS } from "./animals"
 import { FLAG_COMPONENTS } from "./flags"
 import { CAR_COMPONENTS } from "./cars"
 import { FOOD_COMPONENTS } from "./foods"
+import { loadTheme, THEMES } from "../utils/themes"
 
 interface Props {
   card: MemoryCard
@@ -16,9 +17,13 @@ interface Props {
 }
 
 export function MemoryCardComponent({ card, isFlipped, onClick, cardWidth, cardHeight, category = "animals" }: Props) {
-  // scaleX flip trick — works with useNativeDriver unlike rotateY
   const flipAnim = useRef(new Animated.Value(isFlipped ? 1 : 0)).current
   const scaleAnim = useRef(new Animated.Value(1)).current
+  const [themeConfig, setThemeConfig] = useState(THEMES.classic)
+
+  useEffect(() => {
+    loadTheme().then((t) => setThemeConfig(THEMES[t]))
+  }, [])
 
   useEffect(() => {
     Animated.timing(flipAnim, {
@@ -61,10 +66,10 @@ export function MemoryCardComponent({ card, isFlipped, onClick, cardWidth, cardH
           styles.cardFace,
           styles.cardBack,
           card.isHighlighted && styles.highlighted,
-          { width: cardWidth, height: cardHeight },
+          { width: cardWidth, height: cardHeight, backgroundColor: themeConfig.back, borderColor: themeConfig.border },
           { transform: [{ scaleX: backScaleX }], opacity: backOpacity, position: "absolute" },
         ]}>
-          <Text style={styles.backEmoji}>🐾</Text>
+          <Text style={[styles.backQuestion, { color: themeConfig.question }]}>?</Text>
         </Animated.View>
 
         {/* FRONT */}
@@ -115,7 +120,7 @@ const styles = StyleSheet.create({
     borderColor: "#FBBF24",
     borderWidth: 3,
   },
-  backEmoji: { fontSize: 26 },
+  backQuestion: { fontSize: 28, fontWeight: "900" },
   cardFront: {
     backgroundColor: "white",
     borderColor: "#CBD5E1",
