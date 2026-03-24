@@ -9,6 +9,11 @@ interface Props {
   onSelectPairs: (pairs: number, difficulty: Difficulty) => void
   onShowLeaderboard: () => void
   onReturnHome: () => void
+  onShowCampaign: () => void
+  onShowAchievements: () => void
+  onShowTwoPlayer: () => void
+  onShowDailyChallenge: () => void
+  onShowThemePicker: () => void
 }
 
 const DIFFICULTY_ICONS: Record<Difficulty, string> = {
@@ -25,7 +30,7 @@ const DIFFICULTY_COLORS: Record<Difficulty, { bg: string; border: string; btn: s
   hard: { bg: "#7F1D1D", border: "#DC2626", btn: "#991B1B" },
 }
 
-export function MenuScreen({ userName, onSelectPairs, onShowLeaderboard, onReturnHome }: Props) {
+export function MenuScreen({ userName, onSelectPairs, onShowLeaderboard, onReturnHome, onShowCampaign, onShowAchievements, onShowTwoPlayer, onShowDailyChallenge, onShowThemePicker }: Props) {
   const { scale, isTablet, screenWidth } = useScale()
   const contentMaxWidth = isTablet ? Math.min(screenWidth * 0.7, 720) : undefined
 
@@ -68,6 +73,25 @@ export function MenuScreen({ userName, onSelectPairs, onShowLeaderboard, onRetur
           )
         })}
 
+        {/* Extra modes row */}
+        <View style={styles.modesRow}>
+          <TouchableOpacity style={[styles.modeBtn, { height: Math.round(52 * scale) }]} onPress={onShowCampaign} activeOpacity={0.8}>
+            <Text style={[styles.modeBtnText, { fontSize: Math.round(13 * scale) }]}>🗺️{"\n"}Campaign</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.modeBtn, { height: Math.round(52 * scale) }]} onPress={onShowDailyChallenge} activeOpacity={0.8}>
+            <Text style={[styles.modeBtnText, { fontSize: Math.round(13 * scale) }]}>📅{"\n"}Daily</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.modeBtn, { height: Math.round(52 * scale) }]} onPress={onShowTwoPlayer} activeOpacity={0.8}>
+            <Text style={[styles.modeBtnText, { fontSize: Math.round(13 * scale) }]}>👥{"\n"}2 Player</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.modeBtn, { height: Math.round(52 * scale) }]} onPress={onShowAchievements} activeOpacity={0.8}>
+            <Text style={[styles.modeBtnText, { fontSize: Math.round(13 * scale) }]}>🏅{"\n"}Awards</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.modeBtn, { height: Math.round(52 * scale) }]} onPress={onShowThemePicker} activeOpacity={0.8}>
+            <Text style={[styles.modeBtnText, { fontSize: Math.round(13 * scale) }]}>🎨{"\n"}Themes</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* Leaderboard */}
         <TouchableOpacity style={[styles.leaderboardBtn, { height: Math.round(52 * scale) }]} onPress={onShowLeaderboard} activeOpacity={0.8}>
           <Text style={[styles.leaderboardBtnText, { fontSize: Math.round(17 * scale) }]}>🏆 View Leaderboard</Text>
@@ -109,4 +133,20 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   leaderboardBtnText: { color: "white", fontWeight: "700", fontSize: 17 },
+  modesRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 4,
+  },
+  modeBtn: {
+    flex: 1,
+    borderRadius: 14,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 6,
+  },
+  modeBtnText: { color: "white", fontWeight: "700", fontSize: 13, textAlign: "center", lineHeight: 18 },
 })

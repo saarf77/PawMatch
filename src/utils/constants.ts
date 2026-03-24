@@ -117,8 +117,56 @@ export const CARS_CONFIG = [
   { itemId: "bugatti", label: "Bugatti" },
 ]
 
+export const FOOD_CONFIG = [
+  { itemId: "pizza", label: "Pizza" },
+  { itemId: "sushi", label: "Sushi" },
+  { itemId: "burger", label: "Burger" },
+  { itemId: "taco", label: "Taco" },
+  { itemId: "ramen", label: "Ramen" },
+  { itemId: "icecream", label: "Ice Cream" },
+  { itemId: "cake", label: "Cake" },
+  { itemId: "donut", label: "Donut" },
+  { itemId: "hotdog", label: "Hot Dog" },
+  { itemId: "croissant", label: "Croissant" },
+  { itemId: "dumpling", label: "Dumpling" },
+  { itemId: "fries", label: "Fries" },
+  { itemId: "waffle", label: "Waffle" },
+  { itemId: "cupcake", label: "Cupcake" },
+  { itemId: "pretzel", label: "Pretzel" },
+  { itemId: "cookie", label: "Cookie" },
+  { itemId: "lollipop", label: "Lollipop" },
+  { itemId: "popcorn", label: "Popcorn" },
+  { itemId: "strawberry", label: "Strawberry" },
+  { itemId: "watermelon", label: "Watermelon" },
+  { itemId: "avocado", label: "Avocado" },
+  { itemId: "mushroom", label: "Mushroom" },
+  { itemId: "broccoli", label: "Broccoli" },
+  { itemId: "cheese", label: "Cheese" },
+  { itemId: "bacon", label: "Bacon" },
+]
+
 // Keep backward compat alias
 export const ICONS_CONFIG = ANIMALS_CONFIG
+
+export const CAMPAIGN_LEVELS = [
+  { level: 1,  pairs: 3,  difficulty: "easy"   as const, category: "animals" as const, label: "Animal Starter" },
+  { level: 2,  pairs: 4,  difficulty: "easy"   as const, category: "food"    as const, label: "Tasty Bites" },
+  { level: 3,  pairs: 5,  difficulty: "easy"   as const, category: "flags"   as const, label: "World Tour I" },
+  { level: 4,  pairs: 6,  difficulty: "easy"   as const, category: "cars"    as const, label: "Fast Lanes" },
+  { level: 5,  pairs: 6,  difficulty: "medium" as const, category: "animals" as const, label: "Wild Kingdom" },
+  { level: 6,  pairs: 8,  difficulty: "medium" as const, category: "food"    as const, label: "Food Frenzy" },
+  { level: 7,  pairs: 9,  difficulty: "medium" as const, category: "flags"   as const, label: "World Tour II" },
+  { level: 8,  pairs: 10, difficulty: "medium" as const, category: "cars"    as const, label: "Speed Garage" },
+  { level: 9,  pairs: 12, difficulty: "hard"   as const, category: "animals" as const, label: "Safari Master" },
+  { level: 10, pairs: 15, difficulty: "hard"   as const, category: "flags"   as const, label: "Grand Champion" },
+]
+
+export const CARD_THEME_CONFIG = {
+  classic: { back: "#6D28D9", border: "rgba(255,255,255,0.3)", question: "rgba(255,255,255,0.9)", label: "Classic" },
+  dark:    { back: "#111827", border: "rgba(255,255,255,0.15)", question: "rgba(255,255,255,0.7)", label: "Dark" },
+  neon:    { back: "#0F172A", border: "#22D3EE", question: "#22D3EE", label: "Neon" },
+  minimal: { back: "rgba(255,255,255,0.1)", border: "rgba(255,255,255,0.4)", question: "rgba(255,255,255,0.8)", label: "Minimal" },
+}
 
 export const DIFFICULTY_CONFIG = {
   easy: {

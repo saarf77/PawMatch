@@ -5,7 +5,7 @@ import {
 } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { MemoryCardComponent } from "./MemoryCard"
-import type { MemoryCard, Difficulty, Category } from "../types"
+import type { MemoryCard, Difficulty, Category, GameMode } from "../types"
 import { formatTime } from "../utils/helpers"
 import { useScale } from "../utils/useScale"
 
@@ -27,6 +27,10 @@ interface Props {
   cluesRemaining: number
   isShuffling?: boolean
   category?: Category
+  gameMode?: GameMode
+  onGameOver?: () => void
+  isGameOver?: boolean
+  lastFlipResult?: "match" | "mismatch" | null
 }
 
 function getGridCols(numCards: number): number {
@@ -54,9 +58,15 @@ export function GameScreen({
   isRunning, onTimeTick, timerKey,
   userName, moves, onUseClue, cluesRemaining,
   category = "animals",
+  gameMode,
+  onGameOver,
+  isGameOver = false,
+  lastFlipResult,
 }: Props) {
   const [elapsed, setElapsed] = useState(0)
   const [gridSize, setGridSize] = useState({ width: 0, height: 0 })
+  const [revealAll, setRevealAll] = useState(false)
+  const revealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const insets = useSafeAreaInsets()
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const { scale } = useScale()
@@ -73,6 +83,21 @@ export function GameScreen({
   }, [isRunning, timerKey])
 
   useEffect(() => { onTimeTick(elapsed) }, [elapsed])
+
+  // Sudden-death: when a mismatch is signalled, reveal all unmatched cards for 1.5s
+  useEffect(() => {
+    if (gameMode === "suddenDeath" && lastFlipResult === "mismatch") {
+      setRevealAll(true)
+      if (revealTimerRef.current) clearTimeout(revealTimerRef.current)
+      revealTimerRef.current = setTimeout(() => {
+        setRevealAll(false)
+        revealTimerRef.current = null
+      }, 1500)
+    }
+    return () => {
+      if (revealTimerRef.current) clearTimeout(revealTimerRef.current)
+    }
+  }, [lastFlipResult, gameMode])
 
   const canUseClue = flippedIndexes.length === 1 && cluesRemaining > 0
   const progress = numPairs > 0 ? matches / numPairs : 0
@@ -122,6 +147,11 @@ export function GameScreen({
           </Text>
         ) : null}
         <View style={styles.hudRow}>
+          {gameMode === "speed" && (
+            <View style={[styles.chip, styles.speedBadge, { paddingHorizontal: Math.round(10 * scale), paddingVertical: Math.round(5 * scale) }]}>
+              <Text style={[styles.chipText, { fontSize: chipFontSize }]}>Speed</Text>
+            </View>
+          )}
           <View style={[styles.chip, { paddingHorizontal: Math.round(10 * scale), paddingVertical: Math.round(5 * scale) }]}>
             <Text style={[styles.chipText, { fontSize: chipFontSize }]}>⭐ {matches}/{numPairs}</Text>
           </View>
@@ -139,6 +169,9 @@ export function GameScreen({
             <Text style={[styles.chipText, { fontSize: chipFontSize }, !canUseClue && styles.chipDim]}>💡 {cluesRemaining}</Text>
           </TouchableOpacity>
         </View>
+        {gameMode === "suddenDeath" && (
+          <Text style={styles.suddenDeathWarning}>3 cards revealed on mismatch</Text>
+        )}
       </View>
 
       {/* Card grid — explicit rows so cards fill height */}
@@ -151,7 +184,7 @@ export function GameScreen({
                 <View key={card.id} style={{ marginHorizontal: GAP / 2 }}>
                   <MemoryCardComponent
                     card={card}
-                    isFlipped={card.isMatched || flippedIndexes.includes(index)}
+                    isFlipped={card.isMatched || flippedIndexes.includes(index) || (revealAll && !card.isMatched)}
                     onClick={() => onCardClick(index)}
                     cardWidth={cardW}
                     cardHeight={cardH}
@@ -173,6 +206,24 @@ export function GameScreen({
           <Text style={[styles.actionBtnText, { fontSize: actionFontSize }]}>↺ Restart</Text>
         </TouchableOpacity>
       </View>
+
+      {/* One-Shot Game Over overlay */}
+      {gameMode === "oneshot" && isGameOver && (
+        <View style={styles.gameOverOverlay}>
+          <View style={styles.gameOverBox}>
+            <Text style={styles.gameOverTitle}>GAME OVER</Text>
+            <Text style={styles.gameOverMessage}>Wrong match! Better luck next time.</Text>
+            <View style={styles.gameOverButtons}>
+              <TouchableOpacity style={styles.gameOverBtn} onPress={onRestart} activeOpacity={0.8}>
+                <Text style={styles.gameOverBtnText}>Try Again</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.gameOverBtn, styles.gameOverBtnSecondary]} onPress={onBack} activeOpacity={0.8}>
+                <Text style={styles.gameOverBtnText}>Menu</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
 
     </View>
   )
@@ -260,4 +311,65 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   actionBtnText: { color: "white", fontWeight: "700", fontSize: 14 },
+  speedBadge: {
+    backgroundColor: "rgba(59,130,246,0.35)",
+    borderColor: "rgba(59,130,246,0.65)",
+  },
+  suddenDeathWarning: {
+    color: "rgba(251,191,36,0.9)",
+    fontSize: 11,
+    fontWeight: "700",
+    textAlign: "center",
+    marginTop: 2,
+  },
+  gameOverOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.78)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 16,
+    zIndex: 99,
+  },
+  gameOverBox: {
+    backgroundColor: "#1a0505",
+    borderWidth: 2,
+    borderColor: "rgba(239,68,68,0.7)",
+    borderRadius: 20,
+    paddingVertical: 32,
+    paddingHorizontal: 28,
+    alignItems: "center",
+    width: "80%",
+    gap: 12,
+  },
+  gameOverTitle: {
+    color: "#ef4444",
+    fontSize: 28,
+    fontWeight: "900",
+    letterSpacing: 2,
+  },
+  gameOverMessage: {
+    color: "rgba(255,255,255,0.8)",
+    fontSize: 14,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  gameOverButtons: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 8,
+  },
+  gameOverBtn: {
+    backgroundColor: "#ef4444",
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 22,
+  },
+  gameOverBtnSecondary: {
+    backgroundColor: "rgba(255,255,255,0.15)",
+  },
+  gameOverBtnText: {
+    color: "white",
+    fontWeight: "800",
+    fontSize: 14,
+  },
 })

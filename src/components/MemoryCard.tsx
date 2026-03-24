@@ -4,6 +4,7 @@ import type { MemoryCard, Category } from "../types"
 import { ANIMAL_COMPONENTS } from "./animals"
 import { FLAG_COMPONENTS } from "./flags"
 import { CAR_COMPONENTS } from "./cars"
+import { FOOD_COMPONENTS } from "./foods"
 
 interface Props {
   card: MemoryCard
@@ -42,7 +43,7 @@ export function MemoryCardComponent({ card, isFlipped, onClick, cardWidth, cardH
   const backOpacity  = flipAnim.interpolate({ inputRange: [0.49, 0.5], outputRange: [1, 0] })
   const frontOpacity = flipAnim.interpolate({ inputRange: [0.49, 0.5], outputRange: [0, 1] })
 
-  const ItemSVG = category === "flags" ? FLAG_COMPONENTS[card.itemId] : category === "cars" ? CAR_COMPONENTS[card.itemId] : ANIMAL_COMPONENTS[card.itemId]
+  const ItemSVG = category === "flags" ? FLAG_COMPONENTS[card.itemId] : category === "cars" ? CAR_COMPONENTS[card.itemId] : category === "food" ? FOOD_COMPONENTS[card.itemId] : ANIMAL_COMPONENTS[card.itemId]
   const isFlag = category === "flags"
   const svgSize = isFlag ? Math.floor(cardWidth * 0.82) : Math.floor(cardHeight * 0.58)
   const labelFontSize = Math.max(8, Math.floor(cardWidth * 0.13))
@@ -70,7 +71,7 @@ export function MemoryCardComponent({ card, isFlipped, onClick, cardWidth, cardH
         <Animated.View style={[
           styles.cardFace,
           styles.cardFront,
-          (isFlag || category === "cars") && styles.cardFrontNonAnimal,
+          (isFlag || category === "cars" || category === "food") && styles.cardFrontNonAnimal,
           card.isMatched && styles.cardMatched,
           { width: cardWidth, height: cardHeight },
           { transform: [{ scaleX: frontScaleX }], opacity: frontOpacity, position: "absolute" },

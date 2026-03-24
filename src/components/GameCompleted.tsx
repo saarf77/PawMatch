@@ -1,8 +1,9 @@
-import React from "react"
+import React, { useRef } from "react"
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from "react-native"
 import type { GameStats } from "../types"
 import { formatTime } from "../utils/helpers"
 import { calculateScore } from "../utils/gameUtils"
+import { Confetti } from "./Confetti"
 
 interface Props {
   stats: GameStats
@@ -22,9 +23,11 @@ function getPerformance(pairs: number, time: number, moves: number) {
 export function GameCompleted({ stats, onPlayAgain, onBackToMenu }: Props) {
   const perf = getPerformance(stats.pairs, stats.time, stats.moves)
   const finalScore = calculateScore(stats.pairs, stats.time, stats.moves, stats.difficulty)
+  const confettiShown = useRef(false)
 
   return (
     <View style={styles.container}>
+      {!confettiShown.current && (() => { confettiShown.current = true; return <Confetti /> })()}
       <Text style={styles.emoji}>{perf.emoji}</Text>
       <Text style={styles.title}>{perf.title}</Text>
       <Text style={styles.message}>{perf.message}</Text>
