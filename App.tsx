@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from "react"
-import { StyleSheet, Platform, StatusBar } from "react-native"
+import { StyleSheet, Platform, StatusBar, View } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
 
@@ -27,11 +27,13 @@ import { DailyChallengeService } from "./src/services/DailyChallengeService"
 import type { GameState, MemoryCard, User, Difficulty, GameStats, Category, GameMode, CampaignLevel, DailyChallenge } from "./src/types"
 import { DIFFICULTY_CONFIG } from "./src/utils/constants"
 import { shuffleUnmatchedCards, findMatchingCard, calculateScore } from "./src/utils/gameUtils"
+import { useScale } from "./src/utils/useScale"
 
 // Two-player result state
 type TwoPlayerResult = { winner: string | "tie"; p1Score: number; p2Score: number } | null
 
 export default function App() {
+  const { contentMaxWidth } = useScale()
   const [gameState, setGameState] = useState<GameState>("name")
   const [user, setUser] = useState<User | null>(null)
   const [numPairs, setNumPairs] = useState(3)
@@ -275,9 +277,10 @@ export default function App() {
         <SafeAreaView style={styles.safeArea}>
           <StatusBar barStyle="light-content" />
 
-          {gameState === "name" && (
-            <NameScreen onNameSubmit={handleNameSubmit} />
-          )}
+          <View key={gameState} style={[styles.screenShell, { maxWidth: contentMaxWidth }]}>
+            {gameState === "name" && (
+              <NameScreen onNameSubmit={handleNameSubmit} />
+            )}
 
           {gameState === "menu" && (
             <MenuScreen
@@ -372,13 +375,14 @@ export default function App() {
             />
           )}
 
-          {gameState === "completed" && (
-            <GameCompleted
-              stats={gameStats}
-              onPlayAgain={() => startGame(numPairs, difficulty, category, gameMode)}
-              onBackToMenu={() => setGameState("menu")}
-            />
-          )}
+            {gameState === "completed" && (
+              <GameCompleted
+                stats={gameStats}
+                onPlayAgain={() => startGame(numPairs, difficulty, category, gameMode)}
+                onBackToMenu={() => setGameState("menu")}
+              />
+            )}
+          </View>
         </SafeAreaView>
       </LinearGradient>
     </SafeAreaProvider>
@@ -390,5 +394,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    alignItems: "center",
   },
+  screenShell: { flex: 1, width: "100%" },
 })

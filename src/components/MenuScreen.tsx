@@ -31,11 +31,10 @@ const DIFFICULTY_COLORS: Record<Difficulty, { bg: string; border: string; btn: s
 }
 
 export function MenuScreen({ userName, onSelectPairs, onShowLeaderboard, onReturnHome, onShowCampaign, onShowAchievements, onShowTwoPlayer, onShowDailyChallenge, onShowThemePicker }: Props) {
-  const { scale, isTablet, screenWidth } = useScale()
-  const contentMaxWidth = isTablet ? Math.min(screenWidth * 0.7, 720) : undefined
+  const { scale, contentMaxWidth, pagePadding } = useScale()
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, { alignItems: "center" }]} showsVerticalScrollIndicator={false}>
+    <ScrollView contentContainerStyle={[styles.container, { alignItems: "center", paddingHorizontal: pagePadding }]} showsVerticalScrollIndicator={false}>
       <View style={{ width: "100%", maxWidth: contentMaxWidth, gap: 16 }}>
         {/* Header */}
         <View style={styles.header}>

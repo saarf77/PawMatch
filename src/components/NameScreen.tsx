@@ -34,7 +34,7 @@ export function NameScreen({ onNameSubmit }: Props) {
         {/* Animal row */}
         <View style={styles.emojiRow}>
           {ICON_ROW.map((emoji, i) => (
-            <Text key={i} style={[styles.emoji, { fontSize: Math.round(36 * Math.min(scale, 1.4)) }]}>{emoji}</Text>
+            <Text key={i} style={[styles.emoji, { fontSize: Math.round(28 * Math.min(scale, 1.1)) }]}>{emoji}</Text>
           ))}
         </View>
 
@@ -80,8 +80,8 @@ export function NameScreen({ onNameSubmit }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", alignItems: "center" },
   inner: { width: "100%", maxWidth: 340, paddingHorizontal: 24, alignItems: "center", gap: 28 },
-  emojiRow: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 8 },
-  emoji: { fontSize: 36 },
+  emojiRow: { flexDirection: "row", flexWrap: "nowrap", justifyContent: "center", gap: 6 },
+  emoji: { fontSize: 28 },
   titleBlock: { alignItems: "center", gap: 4 },
   title: { fontSize: 56, fontWeight: "900", color: "white", textAlign: "center" },
   subtitle: { fontSize: 17, color: "rgba(255,255,255,0.65)", textAlign: "center" },
