@@ -32,8 +32,6 @@ interface Props {
   isGameOver?: boolean
   livesRemaining?: number
   lastFlipResult?: "match" | "mismatch" | null
-  cardSoundsEnabled: boolean
-  onToggleCardSounds: () => void
 }
 
 function getGridCols(numCards: number): number {
@@ -66,8 +64,6 @@ export function GameScreen({
   isGameOver = false,
   livesRemaining = 3,
   lastFlipResult,
-  cardSoundsEnabled,
-  onToggleCardSounds,
 }: Props) {
   const [elapsed, setElapsed] = useState(0)
   const [gridSize, setGridSize] = useState({ width: 0, height: 0 })
@@ -179,18 +175,6 @@ export function GameScreen({
           >
             <Text style={[styles.chipText, { fontSize: chipFontSize }, !canUseClue && styles.chipDim]}>💡 {cluesRemaining}</Text>
           </TouchableOpacity>
-          {(category === "animals" || category === "cars") && (
-            <TouchableOpacity
-              style={[styles.chip, styles.soundChip, { paddingHorizontal: Math.round(10 * scale), paddingVertical: Math.round(5 * scale) }]}
-              onPress={onToggleCardSounds}
-              accessibilityRole="button"
-              accessibilityLabel={cardSoundsEnabled ? "Mute card sounds" : "Turn on card sounds"}
-              accessibilityHint="Controls the sounds played when animal and car cards are revealed"
-              accessibilityState={{ selected: cardSoundsEnabled }}
-            >
-              <Text style={[styles.chipText, { fontSize: chipFontSize }]}>{cardSoundsEnabled ? "🔊" : "🔇"}</Text>
-            </TouchableOpacity>
-          )}
         </View>
         {gameMode === "suddenDeath" && (
           <Text style={styles.suddenDeathWarning}>3 cards revealed on mismatch</Text>
@@ -290,10 +274,6 @@ const styles = StyleSheet.create({
   clueDisabled: {
     backgroundColor: "rgba(255,255,255,0.05)",
     borderColor: "rgba(255,255,255,0.1)",
-  },
-  soundChip: {
-    minWidth: 38,
-    alignItems: "center",
   },
   chipText: { color: "white", fontWeight: "700", fontSize: 12 },
   chipDim:  { color: "rgba(255,255,255,0.35)" },

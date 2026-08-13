@@ -28,14 +28,6 @@ import type { GameState, MemoryCard, User, Difficulty, GameStats, Category, Game
 import { DIFFICULTY_CONFIG } from "./src/utils/constants"
 import { shuffleUnmatchedCards, findMatchingCard, calculateScore } from "./src/utils/gameUtils"
 import { useScale } from "./src/utils/useScale"
-import { storageGet, storageSet } from "./src/utils/storage"
-import {
-  CARD_SOUNDS_STORAGE_KEY,
-  DEFAULT_CARD_SOUNDS_ENABLED,
-  getCardFlipFeedback,
-  parseCardSoundsPreference,
-  serializeCardSoundsPreference,
-} from "./src/utils/cardSounds"
 
 // Two-player result state
 type TwoPlayerResult = { winner: string | "tie"; p1Score: number; p2Score: number } | null
@@ -63,7 +55,6 @@ export default function App() {
   const [isGameOver, setIsGameOver] = useState(false)
   const [livesRemaining, setLivesRemaining] = useState(3)
   const [lastFlipResult, setLastFlipResult] = useState<"match" | "mismatch" | null>(null)
-  const [cardSoundsEnabled, setCardSoundsEnabled] = useState(DEFAULT_CARD_SOUNDS_ENABLED)
 
   // Campaign
   const [activeCampaignLevel, setActiveCampaignLevel] = useState<CampaignLevel | null>(null)
@@ -76,29 +67,6 @@ export default function App() {
   const [tpResult, setTpResult] = useState<TwoPlayerResult>(null)
 
   const shuffleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  useEffect(() => {
-    let active = true
-    storageGet(CARD_SOUNDS_STORAGE_KEY).then((saved) => {
-      if (!active) return
-      const enabled = parseCardSoundsPreference(saved)
-      setCardSoundsEnabled(enabled)
-      SoundService.setCardSoundsEnabled(enabled)
-    })
-    return () => {
-      active = false
-      SoundService.release()
-    }
-  }, [])
-
-  const handleToggleCardSounds = useCallback(() => {
-    setCardSoundsEnabled((current) => {
-      const enabled = !current
-      SoundService.setCardSoundsEnabled(enabled)
-      void storageSet(CARD_SOUNDS_STORAGE_KEY, serializeCardSoundsPreference(enabled))
-      return enabled
-    })
-  }, [])
 
   const handleNameSubmit = (name: string) => {
     const userId = NameGeneratorService.generateId()
@@ -118,7 +86,6 @@ export default function App() {
     setDifficulty(diff)
     setCategory(cat)
     setGameMode(mode)
-    SoundService.prepareCategory(cat)
     setCards(GameService.createCards(pairs, cat))
     setFlippedIndexes([])
     setMatches(0)
@@ -134,20 +101,11 @@ export default function App() {
   }, [])
 
   const handleCardClick = useCallback((clickedIndex: number) => {
-    const clickedCard = cards[clickedIndex]
-    if (!clickedCard) return
-    const feedback = getCardFlipFeedback({
-      category,
-      itemId: clickedCard.itemId,
-      isMatched: clickedCard.isMatched,
-      isBlocked: isChecking,
-      isAlreadyFlipped: flippedIndexes.includes(clickedIndex),
-      openCardCount: flippedIndexes.length,
-    })
-    if (!feedback.accepted) return
+    if (isChecking || cards[clickedIndex].isMatched) return
+    if (flippedIndexes.includes(clickedIndex)) return
+    if (flippedIndexes.length === 2) return
 
     SoundService.flip()
-    if (feedback.soundKey) SoundService.playCard(category, clickedCard.itemId)
 
     const newFlipped = [...flippedIndexes, clickedIndex]
     setFlippedIndexes(newFlipped)
@@ -226,7 +184,7 @@ export default function App() {
         }
       }
     }
-  }, [cards, flippedIndexes, isChecking, numPairs, currentTime, user, difficulty, moves, gameMode, activeCampaignLevel, category])
+  }, [cards, flippedIndexes, isChecking, numPairs, currentTime, user, difficulty, moves, gameMode, activeCampaignLevel])
 
   const handleTimeTick = useCallback((time: number) => {
     setCurrentTime(time)
@@ -299,7 +257,6 @@ export default function App() {
     setTpP2Name(p2)
     setTpPairs(pairs)
     setTpCategory(cat)
-    SoundService.prepareCategory(cat)
     setTpResult(null)
     setGameState("twoPlayerGame")
   }
@@ -376,8 +333,6 @@ export default function App() {
               p2Name={tpP2Name}
               pairs={tpPairs}
               category={tpCategory}
-              cardSoundsEnabled={cardSoundsEnabled}
-              onToggleCardSounds={handleToggleCardSounds}
               onGameEnd={handleTwoPlayerEnd}
               onBack={() => setGameState("menu")}
             />
@@ -417,8 +372,6 @@ export default function App() {
               isGameOver={isGameOver}
               livesRemaining={livesRemaining}
               lastFlipResult={lastFlipResult}
-              cardSoundsEnabled={cardSoundsEnabled}
-              onToggleCardSounds={handleToggleCardSounds}
             />
           )}
 

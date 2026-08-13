@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react"
+import React, { useState, useCallback, useRef } from "react"
 import {
   View,
   Text,
@@ -10,8 +10,6 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { MemoryCardComponent } from "./MemoryCard"
 import { GameService } from "../services/GameService"
-import { SoundService } from "../services/SoundService"
-import { getCardFlipFeedback } from "../utils/cardSounds"
 import type { MemoryCard, Category } from "../types"
 
 interface Props {
@@ -19,8 +17,6 @@ interface Props {
   p2Name: string
   pairs: number
   category: Category
-  cardSoundsEnabled: boolean
-  onToggleCardSounds: () => void
   onGameEnd: (winner: string | "tie", p1Score: number, p2Score: number) => void
   onBack: () => void
 }
@@ -31,16 +27,7 @@ const CARD_WIDTH = 70
 const CARD_HEIGHT = 95
 const MISMATCH_DELAY_MS = 900
 
-export function TwoPlayerGameScreen({
-  p1Name,
-  p2Name,
-  pairs,
-  category,
-  cardSoundsEnabled,
-  onToggleCardSounds,
-  onGameEnd,
-  onBack,
-}: Props) {
+export function TwoPlayerGameScreen({ p1Name, p2Name, pairs, category, onGameEnd, onBack }: Props) {
   const insets = useSafeAreaInsets()
 
   const initCards = useCallback(() => GameService.createCards(pairs, category), [pairs, category])
@@ -61,25 +48,12 @@ export function TwoPlayerGameScreen({
 
   const currentName = currentPlayer === 1 ? p1Name : p2Name
 
-  useEffect(() => {
-    SoundService.prepareCategory(category)
-  }, [category])
-
   const handleCardClick = useCallback((index: number) => {
+    if (locked || gameOver) return
     const card = cards[index]
-    if (!card) return
-    const feedback = getCardFlipFeedback({
-      category,
-      itemId: card.itemId,
-      isMatched: card.isMatched,
-      isBlocked: locked || gameOver,
-      isAlreadyFlipped: flippedIndexes.includes(index),
-      openCardCount: flippedIndexes.length,
-    })
-    if (!feedback.accepted) return
-
-    SoundService.flip()
-    if (feedback.soundKey) SoundService.playCard(category, card.itemId)
+    if (card.isMatched) return
+    if (flippedIndexes.includes(index)) return
+    if (flippedIndexes.length >= 2) return
 
     const newFlipped = [...flippedIndexes, index]
     setFlippedIndexes(newFlipped)
@@ -133,7 +107,7 @@ export function TwoPlayerGameScreen({
         }, MISMATCH_DELAY_MS)
       }
     }
-  }, [locked, gameOver, cards, flippedIndexes, currentPlayer, p1Matches, p2Matches, pairs, p1Name, p2Name, onGameEnd, category])
+  }, [locked, gameOver, cards, flippedIndexes, currentPlayer, p1Matches, p2Matches, pairs, p1Name, p2Name, onGameEnd])
 
   const handleRestart = () => {
     setCards(initCards())
@@ -194,19 +168,6 @@ export function TwoPlayerGameScreen({
           <Text style={styles.playerChipName} numberOfLines={1}>{p2Name}</Text>
           <Text style={styles.playerChipScore}>{p2Matches}</Text>
         </View>
-
-        {(category === "animals" || category === "cars") && (
-          <TouchableOpacity
-            style={styles.soundToggle}
-            onPress={onToggleCardSounds}
-            accessibilityRole="button"
-            accessibilityLabel={cardSoundsEnabled ? "Mute card sounds" : "Turn on card sounds"}
-            accessibilityHint="Controls the sounds played when animal and car cards are revealed"
-            accessibilityState={{ selected: cardSoundsEnabled }}
-          >
-            <Text style={styles.soundToggleText}>{cardSoundsEnabled ? "🔊" : "🔇"}</Text>
-          </TouchableOpacity>
-        )}
       </View>
 
       {/* Card grid */}
@@ -323,19 +284,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: "rgba(255,255,255,0.45)",
     fontWeight: "600",
-  },
-  soundToggle: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.14)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.24)",
-  },
-  soundToggleText: {
-    fontSize: 17,
   },
   resultBadgeMatch: {
     fontSize: 15,

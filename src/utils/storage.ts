@@ -1,17 +1,7 @@
 // Simple key-value storage using expo-file-system (works in Expo Go without native rebuild)
 import * as FileSystem from "expo-file-system/legacy"
-import { Platform } from "react-native"
 
-const BASE = (FileSystem.documentDirectory ?? "") + "kv/"
-
-function getWebStorage(): Storage | null {
-  if (Platform.OS !== "web") return null
-  try {
-    return globalThis.localStorage
-  } catch {
-    return null
-  }
-}
+const BASE = FileSystem.documentDirectory + "kv/"
 
 async function ensureDir() {
   const info = await FileSystem.getInfoAsync(BASE)
@@ -24,8 +14,6 @@ function keyPath(key: string): string {
 
 export async function storageGet(key: string): Promise<string | null> {
   try {
-    const webStorage = getWebStorage()
-    if (webStorage) return webStorage.getItem(key)
     await ensureDir()
     const path = keyPath(key)
     const info = await FileSystem.getInfoAsync(path)
@@ -38,11 +26,6 @@ export async function storageGet(key: string): Promise<string | null> {
 
 export async function storageSet(key: string, value: string): Promise<void> {
   try {
-    const webStorage = getWebStorage()
-    if (webStorage) {
-      webStorage.setItem(key, value)
-      return
-    }
     await ensureDir()
     await FileSystem.writeAsStringAsync(keyPath(key), value)
   } catch (e) {
@@ -52,11 +35,6 @@ export async function storageSet(key: string, value: string): Promise<void> {
 
 export async function storageRemove(key: string): Promise<void> {
   try {
-    const webStorage = getWebStorage()
-    if (webStorage) {
-      webStorage.removeItem(key)
-      return
-    }
     const path = keyPath(key)
     const info = await FileSystem.getInfoAsync(path)
     if (info.exists) await FileSystem.deleteAsync(path)
